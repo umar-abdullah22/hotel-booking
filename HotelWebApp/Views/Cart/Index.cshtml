@@ -1,0 +1,148 @@
+﻿@using HotelWebApp.ViewModel;
+@model List<OrderVM>
+@{
+    Layout = "_Layout";
+    decimal OrderTotal = 0;
+    decimal PrevoiusBooking = (decimal)ViewBag.PrevoiusBooking;
+}
+<head>
+    <title>Order</title>
+    <link rel="stylesheet" href="~/css/MainCart.css">
+</head>
+
+
+<body>
+    <!-- breadcrumb-section -->
+    <div class="breadcrumb-section breadcrumb-bg">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-8 offset-lg-2 text-center">
+                    <div class="breadcrumb-text">
+                        <p>Best Rooms </p>
+                        <h1>Order</h1>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- end breadcrumb section -->
+    <!-- cart -->
+    <div class="cart-section mt-150 mb-150">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-8 col-md-12">
+                    <div class="cart-table-wrap">
+                        <table id="OrderTable" class="cart-table">
+                            <thead class="cart-table-head">
+                                <tr class="table-head-row">
+                                    <th>Order Id</th>
+                                    <th>Order Creation</th>
+                                    <th>Room Name</th>
+                                    <th>Room Price</th>
+                                    <th>Room Image</th>
+                                    <th>Remove</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var item in Model)
+                                {
+                                    <tr id="RemoveOrder-@item.Id" class="table-body-row" data-order-id="@item.Id">
+                                        <td class="product-total">@item.Id</td>
+                                        <td class="product-total">@item.orderCreation</td>
+                                        <td class="product-name">@item.Rooms.RoomName</td>
+                                        <td class="product-price">@item.Rooms.price</td>
+                                        <td class="product-image"><img src="~/images/@item.Rooms.imageURL" alt=""></td>
+                                        <td class="product-image">
+                                            <div class="cart-buttons">
+                                                <button class="remove-orderBtn" data-order-id="@item.Id" type="submit">x</button>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    OrderTotal += item.Rooms.price;
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div class="col-lg-4">
+                    <div class="total-section">
+                        <table class="total-table">
+                            <thead class="total-table-head">
+                                <tr class="table-total-row">
+                                    <th>Total</th>
+                                    <th>Price</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr class="total-data">
+                                    <td><strong>Subtotal: </strong></td>
+                                    <td id="Subtotal">$@OrderTotal</td>
+                                </tr>
+                                <tr class="total-data">
+                                    <td><strong>Discount: </strong></td>
+                                    <td>@PrevoiusBooking %</td>
+                                </tr>
+                                <tr class="total-data">
+                                    <td><strong>Total: </strong></td>
+                                    <td id="Total"></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        <div class="cart-buttons">
+                            <a id="buttonAction" asp-action="Index" asp-controller="Booking" class="boxed-btn">Book</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- end cart -->
+
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            setInterval(function () {
+                var prevBooking = @PrevoiusBooking;
+                var Totaldiscount = SumPriceCloumn() - (SumPriceCloumn() * prevBooking / 100);
+                $('#Total').text('' + Totaldiscount.toFixed(2) + '$');
+
+            }, 1000);
+
+
+            $(".remove-orderBtn").click(function () {
+                var orderId = $(this).data('order-id');
+                var URL = "https://localhost:44317/api/Order/RemoveOrder/" + orderId;
+
+                $.ajax({
+                    type: 'DELETE',
+                    url: URL,
+                    data: { id: orderId },
+                    success: function (data) {
+                        var TrSelector = "#RemoveOrder-" + orderId;
+                        $(TrSelector).remove();
+                        $('#Subtotal').text('' + SumPriceCloumn() + '$');
+                    },
+                    error: function (error) {
+                        // Handle errors, if any.
+                        console.log(error);
+                    }
+                });
+            });
+            function SumPriceCloumn() {
+                var sum = 0;
+                // Iterate over each tr element inside tbody
+                $('#OrderTable tbody tr').each(function () {
+                    var cellValue = parseFloat($(this).find('td').eq(3).text()); // 3 => index of price column
+                    console.log("cellValue: " + cellValue);
+                    // Add the cell value to the sum
+                    if (!isNaN(cellValue)) {
+                        sum += cellValue;
+                    }
+                });
+                return sum;
+            }
+        });
+    </script>
+</body>

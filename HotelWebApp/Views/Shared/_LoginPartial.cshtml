@@ -1,0 +1,24 @@
+﻿@using HotelWebApp.HelperAPI;
+@using Microsoft.AspNetCore.Identity
+
+
+@if (!string.IsNullOrEmpty(TokenSerializer.ClaimName))
+{
+    <div class="dropdown">
+        <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            @TokenSerializer.ClaimName
+        </button>
+        <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+            <form asp-action="Logout" asp-controller="Account" >
+                <button class="dropdown-item" style="color:cornflowerblue; border:0px;background-color:transparent" type="submit">Logout</button>
+            </form>
+        </div>
+    </div>
+
+}
+else
+{
+    <a class="nav-link" id="login" asp-action="Login" asp-controller="Account" class="flex-c-m trans-04 p-lr-25">
+        Login
+    </a>
+}

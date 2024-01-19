@@ -1,0 +1,145 @@
+﻿@using HotelWebApp.ViewModel;
+@model BookingVM
+@{
+    Layout = "_Layout";
+}
+<head>
+    <title>Booking</title>
+
+</head>
+<body>
+    <partial name="_Notifications" />
+    <section class="banner_main">
+        <div id="myCarousel" class="carousel slide banner" data-ride="carousel">
+
+            <div class="carousel-inner">
+                <div class="carousel-item active">
+                    <img class="first-slide" src="~/images/banner1.jpg" alt="First slide">
+                    <div class="container">
+                    </div>
+                </div>
+                <div class="carousel-item">
+                    <img class="second-slide" src="~/images/banner2.jpg" alt="Second slide">
+                </div>
+                <div class="carousel-item">
+                    <img class="third-slide" src="~/images/banner3.jpg" alt="Third slide">
+                </div>
+            </div>
+        </div>
+        <br />
+        <div class="booking_ocline">
+            <div class="container">
+                <div class="row">
+                    <div class="col-md-9">
+                        <div class="book_room">
+                            <h1>Book a Room Online</h1>
+                            <div asp-validation-summary="All"></div>
+                            <form method="post" asp-action="AddBooking" asp-controller="Booking" class="book_now">
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <span>Full name</span>
+                                        <input asp-for="FullName" class="online_book" placeholder="Full Name" required>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <span>Check In</span>
+                                        <img class="date_cua" src="images/date.png">
+                                        <input id="CheckIn" asp-for="CheckIn" class="online_book" placeholder="dd/mm/yyyy" required>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <span>Check Out</span>
+                                        <img class="date_cua" src="images/date.png">
+                                        <input id="CheckOut" asp-for="CheckOut" class="online_book" placeholder="dd/mm/yyyy" required>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <span>Time</span>
+                                        <img class="date_cua" src="images/date.png">
+                                        <input asp-for="Time" class="online_book" placeholder="dd/mm/yyyy" required>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="select-wrap">
+                                            <span>Adults</span>
+                                            <select class="online_book" name="AdultsSelect" id="Adults" required>
+                                                <option value="1">1</option>
+                                                <option value="2">2</option>
+                                                <option value="3">3</option>
+                                                <option value="4">4</option>
+                                                <option value="5">5</option>
+                                                <option value="6">6</option>
+                                                <option value="7">7</option>
+                                                <option value="8">8</option>
+                                                <option value="9">9</option>
+                                                <option value="10">10</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="select-wrap">
+                                            <span>Children</span>
+                                            <select class="online_book" name="ChildrenSelect" id="Children" required>
+                                                <option value="1">1</option>
+                                                <option value="2">2</option>
+                                                <option value="3">3</option>
+                                                <option value="4">4</option>
+                                                <option value="5">5</option>
+                                                <option value="6">6</option>
+                                                <option value="7">7</option>
+                                                <option value="8">8</option>
+                                                <option value="9">9</option>
+                                                <option value="10">10</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-12">
+                                        <span> Phone Number</span>
+                                        <input asp-for="PhoneNumber" class="online_book" placeholder="+20" required>
+                                        <input type="hidden" asp-for="RoomId" value="0">
+                                        <input type="hidden" asp-for="UserId" value="0" >
+                                    </div>
+                                    <div class="col-md-12">
+                                        <button id="BookBtn" type="submit" class="book_btn">Book Now</button>
+                                    </div>
+                                    <br />
+                                    <br />
+                                    <br />
+                                    <div class="col-md-12">
+                                        <span class="p-3 mb-2 bg-warning text-dark" id="validationDate" style="display:none;"></span>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </section>
+
+    <script>
+        $(document).ready(function () {
+            // Event handler for input changes in the date fields
+            $('#CheckIn, #CheckOut').on('input', function () {
+                compareDatesAsync();
+            });
+
+            // Function to compare the dates asynchronously
+            function compareDatesAsync() {
+                var checkInDate = new Date($('#CheckIn').val());
+                var checkOutDate = new Date($('#CheckOut').val());
+                var spanBlock = $('#validationDate');
+                var BookBtn = $('#BookBtn');
+
+                if (checkInDate > checkOutDate) {
+                    spanBlock.show();
+                    spanBlock.text("Check-out date must be later than Check-in date");
+                    console.log(BookBtn);
+                    BookBtn.prop('disabled', true);
+                } else {
+                    spanBlock.hide();
+                    spanBlock.text("");  // Clear the text
+                    BookBtn.prop('disabled', false);
+
+                }
+            }
+        });
+    </script>
+</body>
